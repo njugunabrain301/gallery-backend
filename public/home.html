@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flex Drive - Vehicle Rental Made Easy</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #ff6b00;
+        --primary-dark: #e65100;
+        --secondary: #1a1a1a;
+        --gray-light: #f5f5f5;
+        --gray: #666666;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background-color: white;
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 5%;
+        background-color: white;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--secondary);
+      }
+
+      .logo span {
+        color: var(--primary);
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 0.9rem;
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .btn-outline {
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        background-color: transparent;
+      }
+
+      .btn-outline:hover {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .hero {
+        margin-top: 76px;
+        padding: 5rem 5%;
+        background-color: var(--secondary);
+        color: white;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: center;
+        min-height: 80vh;
+        background-image: linear-gradient(
+            rgba(26, 26, 26, 0.9),
+            rgba(26, 26, 26, 0.9)
+          ),
+          url("https://images.unsplash.com/photo-1485291571150-772bcfc10da5?auto=format&fit=crop&q=80");
+        background-size: cover;
+        background-position: center;
+      }
+
+      .hero-content {
+        max-width: 600px;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+      }
+
+      .hero p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        color: #cccccc;
+        line-height: 1.6;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .app-download {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .app-mockup {
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 2rem;
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .store-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .store-button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .store-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .store-button img {
+        width: 24px;
+        height: 24px;
+      }
+
+      .store-button .text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .store-button .small-text {
+        font-size: 0.75rem;
+        opacity: 0.8;
+      }
+
+      .store-button .big-text {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .hero {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .hero-content {
+          margin: 0 auto;
+        }
+
+        .hero-buttons {
+          justify-content: center;
+        }
+
+        .app-download {
+          margin-top: 3rem;
+        }
+
+        .app-mockup {
+          max-width: 300px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .store-buttons {
+          flex-direction: column;
+          width: 100%;
+          max-width: 200px;
+          margin: 0 auto;
+        }
+
+        .store-button {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+      }
+
+      .close-modal {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--gray);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--secondary);
+        font-weight: 500;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .error {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+
+      .modal h2 {
+        color: var(--secondary);
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero-buttons {
+          flex-direction: column;
+        }
+
+        .nav-buttons {
+          display: none;
+        }
+      }
+
+      .benefits {
+        padding: 5rem 5%;
+        background-color: white;
+      }
+
+      .benefits h2 {
+        text-align: center;
+        color: var(--secondary);
+        margin-bottom: 3rem;
+        font-size: 2.5rem;
+      }
+
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .benefit-card {
+        padding: 2rem;
+        background-color: var(--gray-light);
+        border-radius: 12px;
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .benefit-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .benefit-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .benefit-card h3 {
+        color: var(--secondary);
+        margin-bottom: 1rem;
+      }
+
+      .benefit-card p {
+        color: var(--gray);
+        line-height: 1.6;
+      }
+
+      .testimonials {
+        padding: 5rem 5%;
+        background-color: var(--secondary);
+        color: white;
+      }
+
+      .testimonials h2 {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2.5rem;
+      }
+
+      .testimonial-carousel {
+        max-width: 1000px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .carousel-container {
+        position: relative;
+        overflow: hidden;
+        padding: 0 4rem;
+      }
+
+      .carousel-track {
+        display: flex;
+        transition: transform 0.5s ease;
+      }
+
+      .testimonial-card {
+        min-width: 100%;
+        padding: 2rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        margin: 0 1rem;
+      }
+
+      .quote {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
+
+      .author {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .author-name {
+        font-weight: 500;
+      }
+
+      .rating {
+        color: var(--primary);
+      }
+
+      .carousel-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+
+      .carousel-button.prev {
+        left: 0;
+      }
+
+      .carousel-button.next {
+        right: 0;
+      }
+
+      .footer {
+        background-color: var(--secondary);
+        color: white;
+        padding: 4rem 5% 2rem;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 3rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-section h3 {
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+      }
+
+      .footer-section ul {
+        list-style: none;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 0.75rem;
+      }
+
+      .footer-section a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-section a:hover {
+        color: var(--primary);
+      }
+
+      .footer-bottom {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      @media (max-width: 768px) {
+        .benefits-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .testimonial-carousel {
+          padding: 0 1rem;
+        }
+
+        .footer-content {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+      }
+
+      .loader {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 8px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .btn.loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.7;
+        cursor: wait;
+      }
+
+      .btn.loading .btn-text {
+        margin-right: 8px;
+      }
+
+      .btn.loading .loader {
+        display: block;
+      }
+
+      .error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .success-content {
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .success-icon {
+        width: 64px;
+        height: 64px;
+        background-color: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin: 0 auto 1.5rem;
+      }
+
+      .success-content h2 {
+        color: var(--secondary);
+        margin-bottom: 1rem;
+      }
+
+      .success-content p {
+        color: var(--gray);
+        margin-bottom: 2rem;
+      }
+
+      .download-prompt {
+        background-color: var(--gray-light);
+        padding: 1.5rem;
+        border-radius: 12px;
+      }
+
+      .download-prompt .store-buttons {
+        margin-top: 1rem;
+      }
+
+      .download-prompt .store-button {
+        background-color: var(--secondary);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">Flex<span>Drive</span></div>
+      <div class="nav-buttons">
+        <button class="btn btn-outline" onclick="openModal('customerModal')">
+          Rent a Car
+        </button>
+        <button class="btn btn-primary" onclick="openModal('partnerModal')">
+          Become a Partner
+        </button>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Drive Your Dreams with FlexDrive</h1>
+        <p>
+          Experience hassle-free vehicle rentals with our innovative platform.
+          Whether you're looking to rent a car or earn money by sharing yours,
+          we've got you covered.
+        </p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary" onclick="openModal('customerModal')">
+            Start Renting Now
+          </button>
+          <button class="btn btn-outline" onclick="openModal('partnerModal')">
+            List Your Vehicle
+          </button>
+        </div>
+      </div>
+      <div class="app-download">
+        <img
+          src="./images/phone-2.png"
+          alt="FlexDrive Mobile App"
+          class="app-mockup"
+        />
+        <div class="store-buttons">
+          <a href="#" class="store-button">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTE3LjU3MSAyNS4wNDVjLS45NzIgMC0xLjcxLS4zMzgtMi4yODktMS4wMTRsLTMuMjg4LTMuOTY3LTMuMjg4IDMuOTY3Yy0uNTc5LjY3Ni0xLjMxNyAxLjAxNC0yLjI4OSAxLjAxNC0xLjE5MyAwLTIuMTY3LS45NjYtMi4xNjctMi4xNDggMC0uMzM4LjA5Ny0uNjc2LjI5LS45NjZsNC4zODQtNS4yODEtNC4zODQtNS4yODFjLS4xOTMtLjI5LS4yOS0uNjI4LS4yOS0uOTY2IDAtMS4xODIuOTc0LTIuMTQ4IDIuMTY3LTIuMTQ4Ljk3MiAwIDEuNzEuMzM4IDIuMjg5IDEuMDE0bDMuMjg4IDMuOTY3IDMuMjg4LTMuOTY3Yy41NzktLjY3NiAxLjMxNy0xLjAxNCAyLjI4OS0xLjAxNCAxLjE5MyAwIDIuMTY3Ljk2NiAyLjE2NyAyLjE0OCAwIC4zMzgtLjA5Ny42NzYtLjI5Ljk2NmwtNC4zODQgNS4yODEgNC4zODQgNS4yODFjLjE5My4yOS4yOS42MjguMjkuOTY2IDAgMS4xODItLjk3NCAyLjE0OC0yLjE2NyAyLjE0OHoiLz48L3N2Zz4="
+              alt="App Store"
+            />
+            <div class="text">
+              <span class="small-text">Download on the</span>
+              <span class="big-text">App Store</span>
+            </div>
+          </a>
+          <a href="#" class="store-button">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTIyLjAxOCAxMy4yOThsLTMuMjk3IDMuMjk3LTcuNDItNy40MiAzLjI5Ny0zLjI5N2M0LjA4OS00LjA4OSAxMC43MTkgMi41NDEgNy40MiA3LjQyem0tNy40MiA3LjQybC0zLjI5NyAzLjI5Ny03LjQyLTcuNDIgMy4yOTctMy4yOTdjNC4wODktNC4wODkgMTAuNzE5IDIuNTQxIDcuNDIgNy40MnoiLz48L3N2Zz4="
+              alt="Google Play"
+            />
+            <div class="text">
+              <span class="small-text">GET IT ON</span>
+              <span class="big-text">Google Play</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="benefits">
+      <h2>Why Choose Car Rental?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">💰</div>
+          <h3>Cost Effective</h3>
+          <p>
+            No maintenance costs, insurance payments, or long-term financial
+            commitments. Pay only for what you use.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🔄</div>
+          <h3>Flexibility</h3>
+          <p>
+            Switch between different vehicles based on your needs - SUV for
+            weekend trips, sedan for daily commute.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">⚡</div>
+          <h3>Instant Access</h3>
+          <p>
+            Get a car when you need it, where you need it. No waiting for
+            maintenance or dealing with paperwork.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🌿</div>
+          <h3>Eco-Friendly</h3>
+          <p>
+            Reduce your carbon footprint by sharing vehicles and only using them
+            when necessary.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <h2>What Our Customers Say</h2>
+      <div class="testimonial-carousel">
+        <div class="carousel-container">
+          <div class="carousel-track">
+            <div class="testimonial-card">
+              <div class="quote">
+                "The best car rental experience I've ever had. Quick, easy, and
+                professional."
+              </div>
+              <div class="author">
+                <div class="author-name">John Doe</div>
+                <div class="rating">★★★★★</div>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <div class="quote">
+                "FlexDrive made my business trips so much easier. Their cars are
+                always in perfect condition."
+              </div>
+              <div class="author">
+                <div class="author-name">Sarah Smith</div>
+                <div class="rating">★★★★★</div>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <div class="quote">
+                "Excellent service and very competitive prices. Highly
+                recommended!"
+              </div>
+              <div class="author">
+                <div class="author-name">Michael Johnson</div>
+                <div class="rating">★★★★★</div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-button prev" onclick="moveCarousel(-1)">
+            ❮
+          </button>
+          <button class="carousel-button next" onclick="moveCarousel(1)">
+            ❯
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>📞 +254 712 345 678</p>
+          <p>✉️ support@flexdrive.com</p>
+          <p>📍 Nairobi, Kenya</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li>
+              <a href="#" onclick="openModal('customerModal')">Rent a Car</a>
+            </li>
+            <li>
+              <a href="#" onclick="openModal('partnerModal')"
+                >Become a Partner</a
+              >
+            </li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="#">Terms & Conditions</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Rental Agreement</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 FlexDrive. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Customer Signup Modal -->
+    <div id="customerModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('customerModal')"
+          >&times;</span
+        >
+        <h2>Sign Up to Rent</h2>
+        <form
+          id="customerSignupForm"
+          onsubmit="handleSignup(event, 'customer')"
+        >
+          <div class="form-group">
+            <label for="customerFirstName">First Name*</label>
+            <input type="text" id="customerFirstName" required />
+          </div>
+          <div class="form-group">
+            <label for="customerLastName">Last Name*</label>
+            <input type="text" id="customerLastName" required />
+          </div>
+          <div class="form-group">
+            <label for="customerOtherNames">Other Names</label>
+            <input type="text" id="customerOtherNames" />
+          </div>
+          <div class="form-group">
+            <label for="customerPhone">Phone Number*</label>
+            <input
+              type="tel"
+              id="customerPhone"
+              required
+              placeholder="254712345678"
+            />
+          </div>
+          <div class="form-group">
+            <label for="customerEmail">Email*</label>
+            <input type="email" id="customerEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="customerPassword">Password*</label>
+            <input type="password" id="customerPassword" required />
+          </div>
+          <div id="customerError" class="error"></div>
+          <button type="submit" class="btn btn-primary" id="customerSubmitBtn">
+            <span class="btn-text">Create Account</span>
+            <div class="loader"></div>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Partner Signup Modal -->
+    <div id="partnerModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('partnerModal')"
+          >&times;</span
+        >
+        <h2>Sign Up as Partner</h2>
+        <form id="partnerSignupForm" onsubmit="handleSignup(event, 'partner')">
+          <div class="form-group">
+            <label for="partnerFirstName">First Name*</label>
+            <input type="text" id="partnerFirstName" required />
+          </div>
+          <div class="form-group">
+            <label for="partnerLastName">Last Name*</label>
+            <input type="text" id="partnerLastName" required />
+          </div>
+          <div class="form-group">
+            <label for="partnerOtherNames">Other Names</label>
+            <input type="text" id="partnerOtherNames" />
+          </div>
+          <div class="form-group">
+            <label for="partnerPhone">Phone Number*</label>
+            <input
+              type="tel"
+              id="partnerPhone"
+              required
+              placeholder="254712345678"
+            />
+          </div>
+          <div class="form-group">
+            <label for="partnerEmail">Email*</label>
+            <input type="email" id="partnerEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="partnerPassword">Password*</label>
+            <input type="password" id="partnerPassword" required />
+          </div>
+          <div id="partnerError" class="error"></div>
+          <button type="submit" class="btn btn-primary" id="partnerSubmitBtn">
+            <span class="btn-text">Create Account</span>
+            <div class="loader"></div>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+      <div class="modal-content success-content">
+        <span class="close-modal" onclick="closeModal('successModal')"
+          >&times;</span
+        >
+        <div class="success-icon">✓</div>
+        <h2>Welcome to FlexDrive!</h2>
+        <p>Your account has been created successfully.</p>
+        <div class="download-prompt">
+          <p>Download our app to get started:</p>
+          <div class="store-buttons">
+            <a href="#" class="store-button">
+              <img
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTE3LjU3MSAyNS4wNDVjLS45NzIgMC0xLjcxLS4zMzgtMi4yODktMS4wMTRsLTMuMjg4LTMuOTY3LTMuMjg4IDMuOTY3Yy0uNTc5LjY3Ni0xLjMxNyAxLjAxNC0yLjI4OSAxLjAxNC0xLjE5MyAwLTIuMTY3LS45NjYtMi4xNjctMi4xNDggMC0uMzM4LjA5Ny0uNjc2LjI5LS45NjZsNC4zODQtNS4yODEtNC4zODQtNS4yODFjLS4xOTMtLjI5LS4yOS0uNjI4LS4yOS0uOTY2IDAtMS4xODIuOTc0LTIuMTQ4IDIuMTY3LTIuMTQ4Ljk3MiAwIDEuNzEuMzM4IDIuMjg5IDEuMDE0bDMuMjg4IDMuOTY3IDMuMjg4LTMuOTY3Yy41NzktLjY3NiAxLjMxNy0xLjAxNCAyLjI4OS0xLjAxNCAxLjE5MyAwIDIuMTY3Ljk2NiAyLjE2NyAyLjE0OCAwIC4zMzgtLjA5Ny42NzYtLjI5Ljk2NmwtNC4zODQgNS4yODEgNC4zODQgNS4yODFjLjE5My4yOS4yOS42MjguMjkuOTY2IDAgMS4xODItLjk3NCAyLjE0OC0yLjE2NyAyLjE0OHoiLz48L3N2Zz4="
+                alt="App Store"
+              />
+              <div class="text">
+                <span class="small-text">Download on the</span>
+                <span class="big-text">App Store</span>
+              </div>
+            </a>
+            <a href="#" class="store-button">
+              <img
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTIyLjAxOCAxMy4yOThsLTMuMjk3IDMuMjk3LTcuNDItNy40MiAzLjI5Ny0zLjI5N2M0LjA4OS00LjA4OSAxMC43MTkgMi41NDEgNy40MiA3LjQyem0tNy40MiA3LjQybC0zLjI5NyAzLjI5Ny03LjQyLTcuNDIgMy4yOTctMy4yOTdjNC4wODktNC4wODkgMTAuNzE5IDIuNTQxIDcuNDIgNy40MnoiLz48L3N2Zz4="
+                alt="Google Play"
+              />
+              <div class="text">
+                <span class="small-text">GET IT ON</span>
+                <span class="big-text">Google Play</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openModal(modalId) {
+        document.getElementById(modalId).style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+        document.body.style.overflow = "auto";
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        if (event.target.className === "modal") {
+          event.target.style.display = "none";
+          document.body.style.overflow = "auto";
+        }
+      };
+
+      async function handleSignup(event, userType) {
+        event.preventDefault();
+        const prefix = userType === "customer" ? "customer" : "partner";
+        const form = document.getElementById(`${prefix}SignupForm`);
+        const errorDiv = document.getElementById(`${prefix}Error`);
+        const submitBtn = document.getElementById(`${prefix}SubmitBtn`);
+
+        try {
+          // Show loading state
+          submitBtn.classList.add("loading");
+          submitBtn.disabled = true;
+          errorDiv.textContent = "";
+
+          const response = await fetch("/auth/signup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              firstName: document.getElementById(`${prefix}FirstName`).value,
+              lastName: document.getElementById(`${prefix}LastName`).value,
+              otherNames: document.getElementById(`${prefix}OtherNames`).value,
+              phoneNumber: document.getElementById(`${prefix}Phone`).value,
+              email: document.getElementById(`${prefix}Email`).value,
+              password: document.getElementById(`${prefix}Password`).value,
+              userType: userType,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Signup failed");
+          }
+
+          // Close the signup modal
+          closeModal(`${prefix}Modal`);
+
+          // Show success modal
+          document.getElementById("successModal").style.display = "flex";
+
+          // Reset form
+          form.reset();
+        } catch (error) {
+          errorDiv.textContent = error.message;
+        } finally {
+          // Remove loading state
+          submitBtn.classList.remove("loading");
+          submitBtn.disabled = false;
+        }
+      }
+
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".testimonial-card");
+      const track = document.querySelector(".carousel-track");
+
+      function moveCarousel(direction) {
+        currentSlide =
+          (currentSlide + direction + slides.length) % slides.length;
+        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+      }
+
+      // Auto-advance carousel
+      setInterval(() => moveCarousel(1), 5000);
+    </script>
+  </body>
+</html>

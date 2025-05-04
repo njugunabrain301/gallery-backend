@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rental Application Test Flow</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #ff6b00;
+        --primary-light: #ff8533;
+        --primary-dark: #cc5500;
+        --secondary: #1a1a1a;
+        --success: #28a745;
+        --warning: #ffc107;
+        --danger: #dc3545;
+        --gray-100: #f8f9fa;
+        --gray-200: #e9ecef;
+        --gray-300: #dee2e6;
+        --gray-400: #ced4da;
+        --gray-500: #adb5bd;
+        --gray-600: #6c757d;
+        --gray-700: #495057;
+        --gray-800: #343a40;
+        --gray-900: #212529;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background-color: var(--gray-100);
+        min-height: 100vh;
+        display: flex;
+      }
+
+      /* Status Panel Styles */
+      .status-panel {
+        width: 300px;
+        background: white;
+        padding: 20px;
+        border-right: 1px solid var(--gray-300);
+        height: 100vh;
+        position: fixed;
+        overflow-y: auto;
+      }
+
+      .status-panel h2 {
+        color: var(--secondary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary);
+      }
+
+      .status-step {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        background: var(--gray-200);
+      }
+
+      .status-step.active {
+        background: var(--primary-light);
+        color: white;
+      }
+
+      .status-step.completed {
+        background: var(--success);
+        color: white;
+      }
+
+      .status-details {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--gray-100);
+        border-radius: 8px;
+      }
+
+      .status-details h3 {
+        color: var(--gray-700);
+        margin-bottom: 10px;
+      }
+
+      .status-details p {
+        margin: 5px 0;
+        font-size: 14px;
+      }
+
+      /* Main Content Styles */
+      .main-content {
+        margin-left: 300px;
+        padding: 30px;
+        flex-grow: 1;
+      }
+
+      .step-container {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .step-container h2 {
+        color: var(--secondary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary);
+      }
+
+      /* Form Styles */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--gray-700);
+        font-weight: 500;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--gray-400);
+        border-radius: 6px;
+        font-size: 16px;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
+      }
+
+      .btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.3s ease;
+      }
+
+      .btn:hover {
+        background: var(--primary-dark);
+      }
+
+      .btn:disabled {
+        background: var(--gray-400);
+        cursor: not-allowed;
+      }
+
+      /* File Upload Styles */
+      .file-upload {
+        border: 2px dashed var(--gray-400);
+        padding: 20px;
+        text-align: center;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .file-upload.dragover {
+        border-color: var(--primary);
+        background: var(--gray-100);
+      }
+
+      .file-preview {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .preview-item {
+        position: relative;
+        height: 150px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .preview-item .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(220, 53, 69, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+      }
+
+      /* Response Display Styles */
+      .response-display {
+        background: var(--gray-800);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        overflow-x: auto;
+      }
+
+      .response-display pre {
+        margin: 0;
+        font-family: monospace;
+      }
+
+      /* Alert Styles */
+      .alert {
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+      }
+
+      .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      /* Loading Indicator */
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid var(--gray-300);
+        border-radius: 50%;
+        border-top-color: var(--primary);
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .token-input-group {
+        display: flex;
+        gap: 10px;
+      }
+
+      .token-input-group input {
+        flex: 1;
+      }
+
+      .help-text {
+        display: block;
+        margin-top: 5px;
+        color: var(--gray-600);
+        font-size: 12px;
+      }
+
+      #tokenStep {
+        border: 2px solid var(--primary);
+        margin-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Status Panel -->
+    <div class="status-panel">
+      <h2>Application Status</h2>
+      <div id="statusSteps">
+        <div class="status-step" data-step="vehicle">1. Select Vehicle</div>
+        <div class="status-step" data-step="dates">2. Choose Dates</div>
+        <div class="status-step" data-step="reservation">
+          3. Make Reservation
+        </div>
+        <div class="status-step" data-step="documents">4. Submit Documents</div>
+        <div class="status-step" data-step="extension">
+          5. Extend Rental (Optional)
+        </div>
+      </div>
+      <div class="status-details" id="applicationDetails">
+        <h3>Application Details</h3>
+        <div id="applicationInfo">
+          <!-- Will be populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Token Management Step -->
+      <div class="step-container" id="tokenStep">
+        <h2>Authentication Token</h2>
+        <div class="form-group">
+          <label for="bearerToken">Bearer Token:</label>
+          <div class="token-input-group">
+            <input
+              type="text"
+              id="bearerToken"
+              placeholder="Enter your bearer token"
+              value=""
+            />
+            <button class="btn" onclick="updateToken()">Update Token</button>
+          </div>
+          <small class="help-text"
+            >Current token will be shown here if exists</small
+          >
+        </div>
+      </div>
+
+      <!-- Step 1: Vehicle Selection -->
+      <div class="step-container" id="vehicleStep">
+        <h2>Step 1: Select Vehicle</h2>
+        <div class="form-group">
+          <label for="vehicleId">Vehicle ID:</label>
+          <input type="text" id="vehicleId" placeholder="Enter vehicle ID" />
+        </div>
+        <button class="btn" onclick="loadVehicleDetails()">
+          Load Vehicle Details
+        </button>
+        <div
+          id="vehicleDetails"
+          class="response-display"
+          style="display: none"
+        ></div>
+      </div>
+
+      <!-- Step 2: Date Selection -->
+      <div class="step-container" id="dateStep" style="display: none">
+        <h2>Step 2: Choose Dates</h2>
+        <div class="form-group">
+          <label for="startDate">Start Date:</label>
+          <input type="datetime-local" id="startDate" />
+        </div>
+        <div class="form-group">
+          <label for="endDate">End Date:</label>
+          <input type="datetime-local" id="endDate" />
+        </div>
+        <button class="btn" onclick="validateDates()">Validate Dates</button>
+      </div>
+
+      <!-- Step 3: Reservation -->
+      <div class="step-container" id="reservationStep" style="display: none">
+        <h2>Step 3: Make Reservation</h2>
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number:</label>
+          <input
+            type="text"
+            id="phoneNumber"
+            placeholder="Enter phone number (254...)"
+          />
+        </div>
+        <button class="btn" onclick="makeReservation()">
+          Make Reservation
+        </button>
+        <div
+          id="reservationDetails"
+          class="response-display"
+          style="display: none"
+        ></div>
+      </div>
+
+      <!-- Step 4: Document Submission -->
+      <div class="step-container" id="documentsStep" style="display: none">
+        <h2>Step 4: Submit Documents</h2>
+        <div class="file-upload" id="dropZone">
+          <p>Drag & drop files here or click to select</p>
+          <input type="file" id="fileInput" multiple style="display: none" />
+        </div>
+        <div class="file-preview" id="filePreview"></div>
+        <button class="btn" onclick="submitDocuments()">
+          Submit Documents
+        </button>
+        <div
+          id="uploadResponse"
+          class="response-display"
+          style="display: none"
+        ></div>
+      </div>
+
+      <!-- Step 5: Extension -->
+      <div class="step-container" id="extensionStep" style="display: none">
+        <h2>Step 5: Extend Rental (Optional)</h2>
+        <div class="form-group">
+          <label for="extensionDays">Number of Days:</label>
+          <input
+            type="number"
+            id="extensionDays"
+            min="1"
+            placeholder="Enter number of days"
+          />
+        </div>
+        <button class="btn" onclick="extendRental()">Extend Rental</button>
+        <div
+          id="extensionResponse"
+          class="response-display"
+          style="display: none"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      // Global state
+      const state = {
+        currentStep: "vehicle",
+        applicationId: null,
+        vehicleId: null,
+        token: null,
+        checkoutRequestID: null,
+      };
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get token from localStorage
+        state.token = localStorage.getItem("authToken");
+        if (state.token) {
+          document.getElementById("bearerToken").value = state.token;
+          updateStatusPanel();
+        }
+      });
+
+      // Update status panel
+      function updateStatusPanel() {
+        const steps = document.querySelectorAll(".status-step");
+        steps.forEach((step) => {
+          step.classList.remove("active", "completed");
+          if (step.dataset.step === state.currentStep) {
+            step.classList.add("active");
+          } else if (
+            getStepIndex(step.dataset.step) < getStepIndex(state.currentStep)
+          ) {
+            step.classList.add("completed");
+          }
+        });
+      }
+
+      function getStepIndex(step) {
+        const steps = [
+          "vehicle",
+          "dates",
+          "reservation",
+          "documents",
+          "extension",
+        ];
+        return steps.indexOf(step);
+      }
+
+      // Step 1: Load Vehicle Details
+      async function loadVehicleDetails() {
+        try {
+          if (!state.token) {
+            throw new Error("Please set your authentication token first");
+          }
+          const vehicleId = document.getElementById("vehicleId").value;
+          if (!vehicleId) {
+            throw new Error("Please enter a vehicle ID");
+          }
+
+          const response = await fetch(`/customer/vehicle/${vehicleId}`, {
+            headers: {
+              Authorization: state.token,
+            },
+          });
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message);
+
+          state.vehicleId = vehicleId;
+          document.getElementById("vehicleDetails").style.display = "block";
+          document.getElementById(
+            "vehicleDetails"
+          ).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+          document.getElementById("dateStep").style.display = "block";
+          state.currentStep = "dates";
+          updateStatusPanel();
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      // Step 2: Validate Dates
+      function validateDates() {
+        const startDate = new Date(document.getElementById("startDate").value);
+        const endDate = new Date(document.getElementById("endDate").value);
+
+        if (startDate >= endDate) {
+          showError("End date must be after start date");
+          return;
+        }
+
+        if (startDate < new Date()) {
+          showError("Start date must be in the future");
+          return;
+        }
+
+        document.getElementById("reservationStep").style.display = "block";
+        state.currentStep = "reservation";
+        updateStatusPanel();
+      }
+
+      // Step 3: Make Reservation
+      async function makeReservation() {
+        try {
+          const phoneNumber = document.getElementById("phoneNumber").value;
+          const startDate = document.getElementById("startDate").value;
+          const endDate = document.getElementById("endDate").value;
+
+          const response = await fetch(
+            `/customer/reserve-car/${state.vehicleId}`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: state.token,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                phoneNumber,
+                startDate,
+                endDate,
+              }),
+            }
+          );
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message);
+
+          state.applicationId = data.applicationId;
+          state.checkoutRequestID = data.checkoutRequestID;
+
+          document.getElementById("reservationDetails").style.display = "block";
+          document.getElementById(
+            "reservationDetails"
+          ).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+          // Start polling for payment status
+          pollPaymentStatus();
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      // Poll payment status
+      async function pollPaymentStatus() {
+        try {
+          const response = await fetch(
+            `/customer/check-payment/${state.applicationId}`,
+            {
+              headers: {
+                Authorization: state.token,
+              },
+            }
+          );
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message);
+
+          if (data.status === "completed") {
+            document.getElementById("documentsStep").style.display = "block";
+            state.currentStep = "documents";
+            updateStatusPanel();
+            updateApplicationInfo(data);
+          } else if (data.status === "failed") {
+            showError("Payment failed");
+          } else {
+            // Continue polling
+            setTimeout(pollPaymentStatus, 5000);
+          }
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      // Step 4: Submit Documents
+      async function submitDocuments() {
+        try {
+          const files = document.getElementById("fileInput").files;
+          if (files.length === 0) {
+            throw new Error("Please select at least one file");
+          }
+
+          const formData = new FormData();
+          Array.from(files).forEach((file) => {
+            formData.append("files", file);
+          });
+
+          const response = await fetch(
+            `/customer/submit-details/${state.applicationId}`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: state.token,
+              },
+              body: formData,
+            }
+          );
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message);
+
+          document.getElementById("uploadResponse").style.display = "block";
+          document.getElementById(
+            "uploadResponse"
+          ).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+          document.getElementById("extensionStep").style.display = "block";
+          state.currentStep = "extension";
+          updateStatusPanel();
+          updateApplicationInfo(data);
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      // Step 5: Extend Rental
+      async function extendRental() {
+        try {
+          const extensionDays = document.getElementById("extensionDays").value;
+          if (!extensionDays || extensionDays < 1) {
+            throw new Error("Please enter a valid number of days");
+          }
+
+          const response = await fetch(
+            `/customer/extend/${state.applicationId}`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: state.token,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                extensionDays: parseInt(extensionDays),
+              }),
+            }
+          );
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message);
+
+          document.getElementById("extensionResponse").style.display = "block";
+          document.getElementById(
+            "extensionResponse"
+          ).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+          // Start polling for extension payment status
+          pollExtensionPaymentStatus(data.checkoutRequestID);
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      // Poll extension payment status
+      async function pollExtensionPaymentStatus(checkoutRequestID) {
+        try {
+          const response = await fetch(
+            `/customer/check-payment/${state.applicationId}`,
+            {
+              headers: {
+                Authorization: state.token,
+              },
+            }
+          );
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message);
+
+          if (data.status === "completed") {
+            showSuccess("Extension payment completed");
+            updateApplicationInfo(data);
+          } else if (data.status === "failed") {
+            showError("Extension payment failed");
+          } else {
+            // Continue polling
+            setTimeout(
+              () => pollExtensionPaymentStatus(checkoutRequestID),
+              5000
+            );
+          }
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      // Update application info in status panel
+      function updateApplicationInfo(data) {
+        const applicationInfo = document.getElementById("applicationInfo");
+        applicationInfo.innerHTML = `
+                <p><strong>Application ID:</strong> ${state.applicationId}</p>
+                <p><strong>Status:</strong> ${data.status}</p>
+                <p><strong>Total Fee:</strong> ${data.totalFee}</p>
+                <p><strong>Start Date:</strong> ${new Date(
+                  data.startDate
+                ).toLocaleDateString()}</p>
+                <p><strong>End Date:</strong> ${new Date(
+                  data.endDate
+                ).toLocaleDateString()}</p>
+                ${
+                  data.extensions
+                    ? `<p><strong>Extensions:</strong> ${data.extensions.length}</p>`
+                    : ""
+                }
+            `;
+      }
+
+      // Utility functions
+      function showError(message) {
+        const alert = document.createElement("div");
+        alert.className = "alert alert-error";
+        alert.textContent = message;
+        document
+          .querySelector(".main-content")
+          .insertBefore(alert, document.querySelector(".step-container"));
+        setTimeout(() => alert.remove(), 5000);
+      }
+
+      function showSuccess(message) {
+        const alert = document.createElement("div");
+        alert.className = "alert alert-success";
+        alert.textContent = message;
+        document
+          .querySelector(".main-content")
+          .insertBefore(alert, document.querySelector(".step-container"));
+        setTimeout(() => alert.remove(), 5000);
+      }
+
+      // File upload handling
+      const dropZone = document.getElementById("dropZone");
+      const fileInput = document.getElementById("fileInput");
+      const filePreview = document.getElementById("filePreview");
+
+      dropZone.addEventListener("click", () => fileInput.click());
+
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      });
+
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("dragover");
+      });
+
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        fileInput.files = e.dataTransfer.files;
+        updateFilePreview();
+      });
+
+      fileInput.addEventListener("change", updateFilePreview);
+
+      function updateFilePreview() {
+        filePreview.innerHTML = "";
+        Array.from(fileInput.files).forEach((file) => {
+          const preview = document.createElement("div");
+          preview.className = "preview-item";
+
+          if (file.type.startsWith("image/")) {
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
+            preview.appendChild(img);
+          } else {
+            preview.innerHTML = `<div style="height: 100%; display: flex; align-items: center; justify-content: center; background: #f5f5f5;">${file.name}</div>`;
+          }
+
+          const removeBtn = document.createElement("button");
+          removeBtn.className = "remove-btn";
+          removeBtn.innerHTML = "×";
+          removeBtn.onclick = () => preview.remove();
+          preview.appendChild(removeBtn);
+
+          filePreview.appendChild(preview);
+        });
+      }
+
+      // Add token update function
+      function updateToken() {
+        const tokenInput = document.getElementById("bearerToken");
+        const newToken = tokenInput.value.trim();
+
+        if (!newToken) {
+          showError("Please enter a valid token");
+          return;
+        }
+
+        // Add 'Bearer ' prefix if not present
+        const formattedToken = newToken.startsWith("Bearer ")
+          ? newToken
+          : `Bearer ${newToken}`;
+
+        // Update state and localStorage
+        state.token = formattedToken;
+        localStorage.setItem("authToken", formattedToken);
+
+        // Update UI
+        tokenInput.value = formattedToken;
+        showSuccess("Token updated successfully");
+
+        // Reset application state
+        state.currentStep = "vehicle";
+        state.applicationId = null;
+        state.vehicleId = null;
+        state.checkoutRequestID = null;
+
+        // Reset UI
+        document.querySelectorAll(".step-container").forEach((container) => {
+          if (container.id !== "tokenStep" && container.id !== "vehicleStep") {
+            container.style.display = "none";
+          }
+        });
+
+        // Clear any displayed responses
+        document.querySelectorAll(".response-display").forEach((display) => {
+          display.style.display = "none";
+          display.innerHTML = "";
+        });
+
+        // Reset file preview
+        if (document.getElementById("filePreview")) {
+          document.getElementById("filePreview").innerHTML = "";
+        }
+
+        updateStatusPanel();
+      }
+    </script>
+  </body>
+</html>

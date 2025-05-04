@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Vehicle - FlexDrive Partner</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #ff6b00;
+        --primary-dark: #e65100;
+        --secondary: #1a1a1a;
+        --gray-light: #f5f5f5;
+        --gray: #666666;
+        --error: #dc3545;
+        --success: #28a745;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background-color: var(--gray-light);
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: var(--secondary);
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--secondary);
+        font-weight: 500;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
+      }
+
+      .file-upload {
+        border: 2px dashed #ddd;
+        padding: 2rem;
+        text-align: center;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .file-upload:hover {
+        border-color: var(--primary);
+        background-color: var(--gray-light);
+      }
+
+      .file-preview {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .preview-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      .btn {
+        background-color: var(--primary);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .btn.loading {
+        opacity: 0.7;
+        cursor: wait;
+      }
+
+      .error-message {
+        color: var(--error);
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      .success-message {
+        color: var(--success);
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      #tokenInput {
+        font-family: monospace;
+      }
+
+      h3 {
+        color: var(--secondary);
+        margin: 2rem 0 1rem;
+        font-size: 1.25rem;
+      }
+
+      .help-text {
+        color: var(--gray);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block;
+      }
+
+      #ratesSection {
+        border-top: 1px solid #ddd;
+        margin-top: 2rem;
+        padding-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Add New Vehicle</h1>
+      <form id="addVehicleForm">
+        <div class="form-group">
+          <label for="token">Authentication Token*</label>
+          <input
+            type="text"
+            id="token"
+            required
+            placeholder="Bearer eyJhbGciOiJIUzI1NiIs..."
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="userType">Adding Vehicle As*</label>
+          <select id="userType" required onchange="toggleRatesSection()">
+            <option value="">Select user type</option>
+            <option value="partner">Partner</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="make">Make*</label>
+          <input type="text" id="make" required placeholder="Toyota" />
+        </div>
+
+        <div class="form-group">
+          <label for="model">Model*</label>
+          <input type="text" id="model" required placeholder="Hilux" />
+        </div>
+
+        <div class="form-group">
+          <label for="plateNo">Plate Number*</label>
+          <input type="text" id="plateNo" required placeholder="KDD 123A" />
+        </div>
+
+        <div class="form-group">
+          <label for="YoM">Year of Manufacture*</label>
+          <input type="number" id="YoM" required placeholder="2020" />
+        </div>
+
+        <div class="form-group">
+          <label for="chassisNo">Chassis Number*</label>
+          <input
+            type="text"
+            id="chassisNo"
+            required
+            placeholder="1HGCM82633A123456"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="engineNo">Engine Number*</label>
+          <input
+            type="text"
+            id="engineNo"
+            required
+            placeholder="ENG123456789"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="vehicleType">Vehicle Type*</label>
+          <select id="vehicleType" required>
+            <option value="">Select vehicle type</option>
+            <option value="Sedan">Sedan</option>
+            <option value="SUV">SUV</option>
+            <option value="Van">Van</option>
+            <option value="Pickup">Pickup</option>
+            <option value="Truck">Truck</option>
+            <option value="Bus">Bus</option>
+            <option value="Motorcycle">Motorcycle</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="color">Color*</label>
+          <input type="text" id="color" required placeholder="Silver" />
+        </div>
+
+        <div class="form-group">
+          <label for="passengerCapacity">Passenger Capacity*</label>
+          <input
+            type="number"
+            id="passengerCapacity"
+            required
+            placeholder="5"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="carryingCapacity">Carrying Capacity (KGs)</label>
+          <input type="number" id="carryingCapacity" placeholder="1000" />
+        </div>
+
+        <div class="form-group">
+          <label for="files">Vehicle Images*</label>
+          <div
+            class="file-upload"
+            onclick="document.getElementById('files').click()"
+          >
+            <p>Click or drag images here</p>
+            <input
+              type="file"
+              id="files"
+              multiple
+              accept="image/*"
+              style="display: none"
+            />
+          </div>
+          <div id="filePreview" class="file-preview"></div>
+        </div>
+
+        <div id="ratesSection" style="display: none">
+          <h3>Rental Rates</h3>
+          <div class="form-group">
+            <label for="hourlyRate">Hourly Rate (KES)*</label>
+            <input type="number" id="hourlyRate" placeholder="1000" min="0" />
+          </div>
+
+          <div class="form-group">
+            <label for="dailyRate">Daily Rate (KES)*</label>
+            <input type="number" id="dailyRate" placeholder="5000" min="0" />
+          </div>
+
+          <div class="form-group">
+            <label for="monthlyRate">Monthly Rate (KES)*</label>
+            <input
+              type="number"
+              id="monthlyRate"
+              placeholder="100000"
+              min="0"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="reservePercentage">Deposit Percentage*</label>
+            <input
+              type="number"
+              id="reservePercentage"
+              placeholder="50"
+              min="0"
+              max="100"
+            />
+            <small class="help-text">Enter a value between 0 and 100</small>
+          </div>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <button type="submit" class="btn" id="submitBtn">Add Vehicle</button>
+      </form>
+    </div>
+
+    <script>
+      const form = document.getElementById("addVehicleForm");
+      const fileInput = document.getElementById("files");
+      const filePreview = document.getElementById("filePreview");
+      const errorMessage = document.getElementById("errorMessage");
+      const successMessage = document.getElementById("successMessage");
+      const submitBtn = document.getElementById("submitBtn");
+
+      // Handle file selection and preview
+      fileInput.addEventListener("change", function (e) {
+        filePreview.innerHTML = "";
+        for (let file of e.target.files) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.classList.add("preview-image");
+            filePreview.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Handle form submission
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        errorMessage.textContent = "";
+        successMessage.textContent = "";
+        submitBtn.classList.add("loading");
+        submitBtn.disabled = true;
+
+        try {
+          const formData = new FormData();
+          const userType = document.getElementById("userType").value;
+
+          // Add all form fields to FormData
+          formData.append("make", document.getElementById("make").value);
+          formData.append("model", document.getElementById("model").value);
+          formData.append("plateNo", document.getElementById("plateNo").value);
+          formData.append("YoM", document.getElementById("YoM").value);
+          formData.append(
+            "chassisNo",
+            document.getElementById("chassisNo").value
+          );
+          formData.append(
+            "engineNo",
+            document.getElementById("engineNo").value
+          );
+          formData.append(
+            "vehicleType",
+            document.getElementById("vehicleType").value
+          );
+          formData.append("color", document.getElementById("color").value);
+          formData.append(
+            "passengerCapacity",
+            document.getElementById("passengerCapacity").value
+          );
+
+          const carryingCapacity =
+            document.getElementById("carryingCapacity").value;
+          if (carryingCapacity) {
+            formData.append("carryingCapacity", carryingCapacity);
+          }
+
+          // Add rates if admin
+          if (userType === "admin") {
+            formData.append(
+              "hourlyRate",
+              document.getElementById("hourlyRate").value
+            );
+            formData.append(
+              "dailyRate",
+              document.getElementById("dailyRate").value
+            );
+            formData.append(
+              "monthlyRate",
+              document.getElementById("monthlyRate").value
+            );
+            formData.append(
+              "reservePercentage",
+              document.getElementById("reservePercentage").value
+            );
+          }
+
+          // Add files
+          const files = document.getElementById("files").files;
+          for (let file of files) {
+            formData.append("files", file);
+          }
+
+          // Choose endpoint based on user type
+          const endpoint =
+            userType === "admin"
+              ? "/admin/add-vehicle"
+              : "/partner/add-vehicle";
+
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              Authorization: document.getElementById("token").value,
+            },
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Failed to add vehicle");
+          }
+
+          successMessage.textContent = "Vehicle added successfully!";
+          form.reset();
+          filePreview.innerHTML = "";
+        } catch (error) {
+          errorMessage.textContent = error.message;
+        } finally {
+          submitBtn.classList.remove("loading");
+          submitBtn.disabled = false;
+        }
+      });
+
+      // Prevent default drag behaviors
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        document
+          .querySelector(".file-upload")
+          .addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // Handle drag and drop
+      document
+        .querySelector(".file-upload")
+        .addEventListener("drop", function (e) {
+          fileInput.files = e.dataTransfer.files;
+          const event = new Event("change");
+          fileInput.dispatchEvent(event);
+        });
+
+      function toggleRatesSection() {
+        const userType = document.getElementById("userType").value;
+        const ratesSection = document.getElementById("ratesSection");
+        const rateInputs = [
+          "hourlyRate",
+          "dailyRate",
+          "monthlyRate",
+          "reservePercentage",
+        ];
+
+        if (userType === "admin") {
+          ratesSection.style.display = "block";
+          rateInputs.forEach((id) => {
+            document.getElementById(id).required = true;
+          });
+        } else {
+          ratesSection.style.display = "none";
+          rateInputs.forEach((id) => {
+            document.getElementById(id).required = false;
+            document.getElementById(id).value = "";
+          });
+        }
+      }
+    </script>
+  </body>
+</html>
