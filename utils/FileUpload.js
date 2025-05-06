@@ -6,7 +6,8 @@ function UploadToCloud(file, bucketName) {
   let keyFilename = process.env.G_CLOUD_KEY_FILE;
   const storage = new Storage({
     projectId,
-    keyFilename,
+    // keyFilename,
+    credentials: JSON.parse(process.env.G_CLOUD_CREDENTIALS),
   });
   const bucket = storage.bucket(bucketName);
 

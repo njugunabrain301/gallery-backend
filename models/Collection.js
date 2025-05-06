@@ -10,6 +10,10 @@ const CollectionSchema = new mongoose.Schema({
       type: String, // URLs to stored images
     },
   ],
+  type: {
+    type: String,
+    required: true,
+  },
   image: {
     type: String,
   },

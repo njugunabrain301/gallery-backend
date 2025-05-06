@@ -12,12 +12,9 @@ function authenticate(req, res, next) {
   });
 }
 
-function generateToken(payload, duration = "60m") {
-  let token = jwt.sign({ payload: payload }, process.env.JWT_SECRET, {
-    expiresIn: duration,
-  });
-  return token;
-}
+const generateToken = (payload, expiresIn = "60m") => {
+  return jwt.sign({ payload }, process.env.JWT_SECRET, { expiresIn });
+};
 
 async function isValid(token) {
   return await jwt.verify(token, process.env.JWT_SECRET, (err, bid) => {

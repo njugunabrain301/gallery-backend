@@ -3,7 +3,10 @@ const { authenticate } = require("../utils/Auth");
 const Collection = require("../models/Collection");
 const Application = require("../models/Application");
 const SendSMS = require("../utils/sendSMS");
-const { uploadMultipleFiles } = require("../utils/FileUpload");
+const {
+  uploadMultipleFiles,
+  uploadSingleFile,
+} = require("../utils/FileUpload");
 const Payment = require("../models/Payment");
 const User = require("../models/User");
 const router = express.Router();
@@ -38,28 +41,36 @@ router.get("/get-collection/:id ", async (req, res) => {
   }
 });
 
-router.post("/add-collection", async (req, res) => {
-  try {
-    const collection = new Collection(req.body);
-    await collection.save();
-    res.json(collection);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+router.post(
+  "/add-collection",
+  uploadSingleFile("image", true),
+  async (req, res) => {
+    try {
+      const collection = new Collection(req.body);
+      await collection.save();
+      res.json(collection);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
-});
+);
 
-router.put("/update-collection/:id", async (req, res) => {
-  try {
-    const collection = await Collection.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    res.json(collection);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+router.put(
+  "/update-collection/:id",
+  uploadSingleFile("image", true),
+  async (req, res) => {
+    try {
+      const collection = await Collection.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+      res.json(collection);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
-});
+);
 
 router.delete("/delete-collection/:id", async (req, res) => {
   try {
@@ -114,5 +125,41 @@ router.delete(
     }
   }
 );
+
+/**
+ * @swagger
+ * /admin/collections/{type}:
+ *   get:
+ *     tags: [Collections]
+ *     summary: Get collections by type
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The collection type to filter by
+ *     responses:
+ *       200:
+ *         description: List of collections of specified type
+ *       500:
+ *         description: Server error
+ */
+router.get("/collections/:type", async (req, res) => {
+  try {
+    const { type } = req.params;
+    const collections = await Collection.find({ type });
+
+    if (!collections.length) {
+      return res.status(404).json({
+        message: `No collections found of type: ${type}`,
+      });
+    }
+
+    res.json(collections);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;

@@ -504,4 +504,41 @@ router.put("/update-profile", authenticate, async (req, res) => {
   }
 });
 
+router.get("/check-token", authenticate, async (req, res) => {
+  try {
+    // Get expiration time from the token payload
+    const expirationTime = new Date(req.user.exp * 1000); // Convert to milliseconds
+    const now = new Date();
+
+    // If token expires in less than 30 minutes, refresh it
+    if (expirationTime - now < 30 * 60 * 1000) {
+      // Generate new token with 2 more hours
+      const newToken = generateToken(
+        {
+          _id: req.user.payload._id,
+          userType: req.user.payload.userType,
+          phoneNumber: req.user.payload.phoneNumber,
+        },
+        "2h"
+      );
+
+      return res.json({
+        valid: true,
+        newToken,
+      });
+    }
+
+    // Token is still valid and not close to expiration
+    res.json({
+      valid: true,
+      newToken: null,
+    });
+  } catch (error) {
+    res.status(500).json({
+      valid: false,
+      message: error.message,
+    });
+  }
+});
+
 module.exports = router;

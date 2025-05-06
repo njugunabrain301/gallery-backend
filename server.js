@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const path = require("path");
 const AdminRouter = require("./routes/Admin");
+const UserRouter = require("./routes/user");
 const AuthRouter = require("./routes/Auth");
 const swagger = require("./swagger");
 const db = require("./utils/DBConnection");
@@ -21,6 +22,7 @@ app.use(express.json());
 db();
 
 app.use("/admin", AdminRouter);
+app.use("/user", UserRouter);
 app.use("/auth", AuthRouter);
 
 // Serve home page
