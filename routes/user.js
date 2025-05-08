@@ -44,7 +44,9 @@ router.get("/get-collection/:id", async (req, res) => {
 router.get("/get-collections/:type", async (req, res) => {
   try {
     const { type } = req.params;
-    const collections = await Collection.find({ type });
+    const collections = await Collection.find({
+      type: { $regex: new RegExp(type, "i") },
+    });
 
     if (!collections.length) {
       return res.status(404).json({
