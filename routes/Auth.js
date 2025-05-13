@@ -349,7 +349,6 @@ router.post("/signup", async (req, res) => {
 // Login route
 router.post("/login", async (req, res) => {
   try {
-    console.log(req.body);
     // Find user
     const user = await User.findOne({ phoneNumber: req.body.username });
     if (!user) {
