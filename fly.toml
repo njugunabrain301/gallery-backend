@@ -1,7 +1,7 @@
-app = "your-app-name"  # Replace with your actual Fly.io app name
+app = "gallery-backend"
 
 [build]
-  builder = "heroku/buildpacks:20"  # Optional if you're using Docker
+  builder = "heroku/buildpacks:20"
 
 [env]
   PORT = "8080"
