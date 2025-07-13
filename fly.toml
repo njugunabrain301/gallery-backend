@@ -1,5 +1,8 @@
 app = "your-app-name"  # Replace with your actual Fly.io app name
 
+[build]
+  builder = "heroku/buildpacks:20"  # Optional if you're using Docker
+
 [env]
   PORT = "8080"
 
